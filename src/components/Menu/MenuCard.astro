@@ -1,0 +1,107 @@
+---
+// src/components/Menu/MenuCard.astro
+import AddToCartBtn from './AddToCartBtn.jsx'; 
+import DynamicPrice from './DynamicPrice.jsx';
+
+const { 
+  id, 
+  name,       
+  description, 
+  price, 
+  image, 
+  category, 
+  prices, 
+  type = "fijo" 
+} = Astro.props;
+
+// --- LÓGICA DE PRECIO ---
+let displayPrice = price;
+
+if (!displayPrice && prices) {
+    const priceValues = Object.values(prices).map(Number);
+    if (priceValues.length > 0) {
+        displayPrice = Math.min(...priceValues);
+    }
+}
+
+const productData = { 
+    id, name, price: displayPrice, type, category, prices, description, image, opciones: [] 
+}; 
+
+// Detectamos si es Pizza para aplicar el diseño especial
+const isPizza = category === 'Pizzas' || category === 'Especialidades del Mar';
+---
+
+{/* CAMBIOS DE COLOR APLICADOS:
+  1. bg-neutral-900 -> bg-white (Fondo blanco)
+  2. border-white/5 -> border-neutral-200 (Borde gris sutil)
+  3. Textos -> text-neutral-900 y text-neutral-500 (Textos oscuros)
+*/}
+
+<div class="bg-white border border-neutral-200 rounded-[1.5rem] overflow-hidden hover:border-amber-500/50 hover:shadow-xl transition-all duration-300 group h-full flex flex-col shadow-sm">
+  
+  {/* --- ZONA DE IMAGEN --- */}
+  <div class="relative overflow-hidden aspect-video">
+      <img src={image} alt={name} class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+      
+      {/* DISEÑO TIPO PAQUETE (SOLO PARA PIZZAS) */}
+      {isPizza && (
+        <div class="hidden md:flex absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex-col justify-end p-3 md:p-4 z-10">
+            
+            {/* Título sobre imagen (Mantenemos blanco para contraste con la foto oscura) */}
+            <h2 class="text-2xl md:text-4xl font-black text-white italic uppercase leading-none transform -skew-x-6 drop-shadow-md mb-1">
+                {name}
+            </h2>
+            
+            {/* Botón visual "Ordena" */}
+            <div class="mt-1 inline-block">
+                <span class="bg-amber-500 text-neutral-900 text-[10px] md:text-xs font-black px-2 py-1 rounded-sm uppercase tracking-wider transform -skew-x-6 inline-block shadow-lg">
+                    ¡ORDENAR!
+                </span>
+            </div>
+        </div>
+      )}
+
+      {/* Etiqueta de categoría para lo que NO es pizza */}
+      {!isPizza && (
+        <div class="absolute top-2 right-2 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full border border-neutral-200 z-20 shadow-sm">
+          <span class="text-[10px] font-bold text-amber-600 uppercase tracking-widest">{category}</span>
+        </div>
+      )}
+  </div>
+
+  {/* --- CUERPO DE LA TARJETA --- */}
+  {/* Cambio: Fondo blanco en lugar de neutral-900 */}
+  <div class="p-4 md:p-5 flex flex-col flex-grow relative z-20 bg-white">
+    <div class="flex-grow">
+        
+        {/* Título para NO pizzas (Texto oscuro) */}
+        {!isPizza && (
+            <h3 class="text-xl font-serif italic font-bold text-neutral-900 mb-2">{name}</h3>
+        )}
+
+        {/* SI es pizza y estamos en móvil (donde se oculta el overlay), mostramos el nombre aquí */}
+        {isPizza && (
+            <h3 class="md:hidden text-xl font-serif italic font-bold text-neutral-900 mb-2">{name}</h3>
+        )}
+        
+        {/* Descripción (Texto gris medio para leer bien sobre blanco) */}
+        <p class={`text-neutral-500 text-xs md:text-sm leading-relaxed mb-4 line-clamp-2 ${isPizza ? 'hidden md:block' : 'block'}`}>
+            {description}
+        </p>
+    </div>
+
+    {/* Footer de la tarjeta con Precio y Botón */}
+    <div class={`flex items-center justify-between gap-3 border-neutral-100 pt-3 ${!isPizza ? 'border-t mt-2' : ''}`}>
+        
+        {/* Pasamos una clase de color al precio para que se vea oscuro */}
+        <div class="text-neutral-900 font-bold">
+            <DynamicPrice client:load prices={prices} basePrice={displayPrice} />
+        </div>
+
+        <div class="w-28 md:w-32">
+            <AddToCartBtn client:visible product={productData} />
+        </div>
+    </div>
+  </div>
+</div>

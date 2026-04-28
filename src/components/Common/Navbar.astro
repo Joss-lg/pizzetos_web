@@ -1,0 +1,194 @@
+---
+// src/components/Common/Navbar.astro
+import CartCounter from './CartCounter.jsx';
+
+const navLinks = [
+  { name: 'Menú', href: '#menu' },
+  { name: 'Paquetes', href: '#paquetes' },
+  { name: 'Snacks', href: '#snacks' },
+  { name: 'Sucursales', href: '#sucursales' }
+];
+---
+
+<header 
+  id="main-navbar"
+  class=" hidden md:block fixed top-0 w-full z-50 transition-all duration-500 border-b border-transparent"
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-24 relative z-50"> {/* Aumenté un poco la altura de h-20 a h-24 para que el logo grande quepa mejor */}
+      
+      {/* --- LOGO CON IMAGEN GRANDE --- */}
+      <div class="flex-shrink-0 flex items-center">
+        <a href="#inicio" class="group block">
+          <img 
+            src="/3.png" 
+            alt="Pizzetos Logo" 
+            class="h-16 md:h-20 w-auto object-contain transition-transform duration-300 group-hover:scale-105" 
+          />
+        </a>
+      </div>
+
+      {/* --- NAVEGACIÓN DESKTOP --- */}
+      <nav class="hidden md:flex space-x-8 items-center">
+        {navLinks.map((link) => (
+          <a 
+            href={link.href} 
+            /* Enlaces oscuros (stone-600) que se ponen negros al pasar el mouse */
+            class="text-sm uppercase tracking-widest font-bold text-stone-600 hover:text-stone-900 transition-colors duration-300 relative group py-2"
+          >
+            {link.name}
+            {/* Subrayado naranja */}
+            <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-amber-500 group-hover:w-full transition-all duration-300 ease-out"></span>
+          </a>
+        ))}
+      </nav>
+
+      {/* --- BOTÓN CARRITO (Desktop) --- */}
+      <div class="hidden md:flex items-center">
+        <button 
+          id="cart-btn-desktop" 
+          class="group relative overflow-hidden bg-amber-500 text-white px-6 py-2.5 rounded-full font-bold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-3 ring-2 ring-transparent hover:ring-amber-500/20"
+        >
+            <div class="absolute inset-0 bg-white/20 group-hover:bg-transparent transition-colors duration-300"></div>
+            
+            {/* --- AQUÍ ESTÁ EL CAMBIO CLAVE: Agregué id="cart-icon-target" --- */}
+            <div id="cart-icon-target" class="relative z-10 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transition-transform group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                <span class="tracking-wide">TU PEDIDO</span>
+            </div>
+
+            {/* Contador: Fondo negro para contraste */}
+            <span class="relative z-10 bg-stone-900 text-white text-xs font-bold px-2.5 py-0.5 rounded-full border border-white/10">
+               <CartCounter client:load />
+            </span>
+        </button>
+      </div>
+      
+      {/* --- BOTÓN HAMBURGUESA / CERRAR (Móvil) --- */}
+      <div class="md:hidden flex items-center">
+        <button 
+          id="mobile-menu-btn" 
+          /* Icono hamburguesa oscuro */
+          class="text-stone-800 hover:text-amber-600 relative z-50 p-2 focus:outline-none transition-colors duration-300"
+        >
+          {/* Icono Hamburguesa */}
+          <svg id="icon-menu" class="h-8 w-8 transition-transform duration-300 transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+          
+          {/* Icono X */}
+          <svg id="icon-close" class="h-8 w-8 hidden transition-transform duration-300 transform rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  {/* --- MENÚ DESPLEGABLE MÓVIL (Full Screen) --- */}
+  {/* Fondo Claro (#FEFCF0) */}
+  <div 
+    id="mobile-menu" 
+    class="fixed inset-0 z-40 bg-[#FEFCF0]/98 backdrop-blur-xl opacity-0 invisible transition-all duration-300 flex flex-col justify-center items-center"
+  >
+      {/* Decoración de fondo */}
+      <div class="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+      <div class="absolute bottom-0 left-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+
+      <div class="relative z-10 w-full px-8 space-y-8 text-center">
+          
+          <nav class="flex flex-col space-y-6">
+            {navLinks.map((link, index) => (
+                <a 
+                href={link.href} 
+                /* Enlaces Móvil: Oscuros y grandes */
+                class="text-3xl md:text-4xl font-display font-bold text-stone-800 hover:text-amber-600 transition-colors duration-300 transform hover:scale-105"
+                style={`transition-delay: ${index * 50}ms`}
+                >
+                {link.name}
+                </a>
+            ))}
+          </nav>
+
+          <div class="w-16 h-1 bg-stone-300 rounded-full mx-auto"></div>
+
+          {/* Botón Carrito Gigante Móvil */}
+          <button 
+            id="cart-btn-mobile"
+            class="w-full max-w-xs mx-auto bg-amber-500 text-white font-bold py-4 rounded-2xl flex justify-center items-center gap-3 shadow-lg transition-all active:scale-95"
+          >
+             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+             </svg>
+             <span class="text-lg tracking-wide">VER TU PEDIDO</span>
+             <span class="bg-stone-900 text-white text-sm px-3 py-1 rounded-full border border-white/20">
+                <CartCounter client:load />
+             </span>
+          </button>
+      </div>
+  </div>
+
+</header>
+
+<script>
+  import { isCartOpen } from '../../stores/cartStore';
+
+  const openCart = () => isCartOpen.set(true);
+  document.getElementById('cart-btn-desktop')?.addEventListener('click', openCart);
+
+  const menuBtn = document.getElementById('mobile-menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const iconMenu = document.getElementById('icon-menu');
+  const iconClose = document.getElementById('icon-close');
+  const btnMobileCart = document.getElementById('cart-btn-mobile');
+
+  function toggleMenu() {
+    const isClosed = mobileMenu.classList.contains('invisible');
+    
+    if (isClosed) {
+        // ABRIR
+        mobileMenu.classList.remove('invisible', 'opacity-0');
+        mobileMenu.classList.add('visible', 'opacity-100');
+        iconMenu.classList.add('hidden');
+        iconClose.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    } else {
+        // CERRAR
+        mobileMenu.classList.add('invisible', 'opacity-0');
+        mobileMenu.classList.remove('visible', 'opacity-100');
+        iconMenu.classList.remove('hidden');
+        iconClose.classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+  }
+
+  if (menuBtn) menuBtn.addEventListener('click', toggleMenu);
+
+  mobileMenu?.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', toggleMenu);
+  });
+
+  if (btnMobileCart) {
+    btnMobileCart.addEventListener('click', () => {
+        openCart();
+        toggleMenu(); 
+    });
+  }
+
+  // --- Scroll Effect para Tema Claro ---
+  const navbar = document.getElementById('main-navbar');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 20) {
+      // AL BAJAR: Fondo Hueso/Crema translúcido, sombra y borde sutil
+      navbar.classList.add('bg-[#FEFCF0]/95', 'backdrop-blur-md', 'shadow-sm', 'border-stone-200');
+      navbar.classList.remove('border-transparent');
+    } else {
+      // ARRIBA: Transparente
+      navbar.classList.remove('bg-[#FEFCF0]/95', 'backdrop-blur-md', 'shadow-sm', 'border-stone-200');
+      navbar.classList.add('border-transparent');
+    }
+  });
+</script>
