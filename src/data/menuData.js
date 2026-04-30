@@ -200,7 +200,7 @@ export const menuItems = [
     category: "Especialidades del Mar",
     image: "/img/del mar..webp",
     // CORRECCIÓN: Antes 250/320/450/540 -> Ahora 275/340/470/560
-    prices: { "Chica": 310, "Mediana": 375, "Grande": 510, "Familiar": 600 },
+    prices: { "Chica": 310, "Mediana": 400, "Grande": 500, "Familiar": 600 },
     type: "personalizable"
   },
 
