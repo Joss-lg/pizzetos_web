@@ -51,34 +51,34 @@ export default function AdminPanel() {
     setShowResetModal(true);
   };
 
-  // --- FUNCIÓN 2: EJECUTAR REINICIO (AL DAR CLICK EN "SÍ") ---
-  const confirmReset = async () => {
-    setShowResetModal(false); // Cerramos el modal primero
-    setLoading(true);
+  // --- FUNCIÓN 2: EJECUTAR REINICIO ---
+const confirmReset = async () => {
+  setShowResetModal(false);
+  setLoading(true);
 
-    const resetData = {
-      "Miraflores": 0,
-      "Chalco": 0,
-      "_ultima_actualizacion": new Date().toLocaleString()
-    };
-
-    try {
-      await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(resetData)
-      });
-      
-      setStats(resetData);
-      showToast("¡Contador reiniciado a CERO!", "success"); // Notificación bonita
-
-    } catch (error) {
-      console.error("Error al reiniciar", error);
-      showToast("Hubo un error al intentar reiniciar", "error");
-    } finally {
-      setLoading(false);
-    }
+  // Eliminamos "Chalco" de aquí
+  const resetData = {
+    "Miraflores": 0,
+    "_ultima_actualizacion": new Date().toLocaleString()
   };
+
+  try {
+    await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(resetData)
+    });
+    
+    setStats(resetData);
+    showToast("¡Contador reiniciado!", "success");
+
+  } catch (error) {
+    console.error("Error al reiniciar", error);
+    showToast("Hubo un error al intentar reiniciar", "error");
+  } finally {
+    setLoading(false);
+  }
+};
 
   // --- VALIDAR CONTRASEÑA ---
   const handleLogin = (e) => {
@@ -167,29 +167,23 @@ export default function AdminPanel() {
           </div>
         </div>
 
-        {/* TARJETAS */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white p-8 rounded-2xl shadow-xl shadow-amber-500/5 border-l-4 border-amber-500 flex justify-between items-center transform transition hover:-translate-y-1 hover:shadow-2xl">
-            <div>
-              <div className="flex items-center gap-2 mb-2"><span className="w-2 h-2 rounded-full bg-amber-500"></span><p className="text-gray-400 text-xs font-bold uppercase tracking-widest">Sucursal</p></div>
-              <h2 className="text-3xl font-serif text-gray-800">Miraflores</h2>
-            </div>
-            <div className="text-right">
-              <span className="block text-6xl font-serif text-amber-500 leading-none">{stats?.Miraflores || 0}</span>
-              <span className="text-xs text-gray-400 font-medium">Pedidos totales</span>
-            </div>
-          </div>
-          <div className="bg-white p-8 rounded-2xl shadow-xl shadow-green-500/5 border-l-4 border-green-500 flex justify-between items-center transform transition hover:-translate-y-1 hover:shadow-2xl">
-            <div>
-              <div className="flex items-center gap-2 mb-2"><span className="w-2 h-2 rounded-full bg-green-500"></span><p className="text-gray-400 text-xs font-bold uppercase tracking-widest">Sucursal</p></div>
-              <h2 className="text-3xl font-serif text-gray-800">Chalco</h2>
-            </div>
-            <div className="text-right">
-              <span className="block text-6xl font-serif text-green-500 leading-none">{stats?.Chalco || 0}</span>
-              <span className="text-xs text-gray-400 font-medium">Pedidos totales</span>
-            </div>
-          </div>
-        </div>
+     {/* TARJETAS */}
+<div className="grid grid-cols-1 max-w-md mx-auto"> 
+  {/* Tarjeta Miraflores */}
+  <div className="bg-white p-8 rounded-2xl shadow-xl shadow-amber-500/5 border-l-4 border-amber-500 flex justify-between items-center transform transition hover:-translate-y-1 hover:shadow-2xl">
+    <div>
+      <div className="flex items-center gap-2 mb-2">
+        <span className="w-2 h-2 rounded-full bg-amber-500"></span>
+        <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">Sucursal</p>
+      </div>
+      <h2 className="text-3xl font-serif text-gray-800">Miraflores</h2>
+    </div>
+    <div className="text-right">
+      <span className="block text-6xl font-serif text-amber-500 leading-none">{stats?.Miraflores || 0}</span>
+      <span className="text-xs text-gray-400 font-medium">Pedidos totales</span>
+    </div>
+  </div>
+</div>
 
         {/* FOOTER */}
         <div className="mt-12 text-center">
@@ -199,17 +193,15 @@ export default function AdminPanel() {
         </div>
       </div>
 
-      {/* --- MODAL PERSONALIZADO (POP-UP DE CONFIRMACIÓN) --- */}
-      {showResetModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in">
-           <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 border border-gray-100 transform transition-all scale-100">
-              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4 text-red-500 mx-auto">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-              </div>
-              <h3 className="text-xl font-bold text-center text-gray-800 mb-2">¿Estás seguro?</h3>
-              <p className="text-center text-gray-500 text-sm mb-6">
-                 Esto pondrá el contador de ambas sucursales en <strong>CERO</strong>. Esta acción no se puede deshacer.
-              </p>
+      {/* --- MODAL PERSONALIZADO --- */}
+{showResetModal && (
+  <div className="... (clases existentes)">
+     <div className="...">
+        {/* ... (iconos existentes) */}
+        <h3 className="text-xl font-bold text-center text-gray-800 mb-2">¿Estás seguro?</h3>
+        <p className="text-center text-gray-500 text-sm mb-6">
+            Esto pondrá el contador de <strong>Miraflores</strong> en <strong>CERO</strong>. Esta acción no se puede deshacer.
+        </p>
               <div className="flex gap-3">
                  <button onClick={() => setShowResetModal(false)} className="flex-1 py-3 rounded-xl border border-gray-200 text-gray-600 font-medium hover:bg-gray-50 transition-colors">
                     Cancelar
