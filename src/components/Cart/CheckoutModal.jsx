@@ -14,7 +14,6 @@ export default function CheckoutModal() {
 
   const SUCURSALES = {
     "Miraflores": { nombre: "Pizzetos Miraflores", telefono: "5215584457355" },
-    "Chalco": { nombre: "Pizzetos Chalco", telefono: "5215573959109" }
   };
 
   const [formData, setFormData] = useState({
@@ -33,7 +32,7 @@ export default function CheckoutModal() {
 
   const updateCounter = async (sucursalElegida) => {
     try {
-      let currentData = { "Miraflores": 0, "Chalco": 0 };
+      let currentData = { "Miraflores": 0};
       try {
         const response = await fetch(API_URL);
         if (response.ok) currentData = await response.json();
@@ -199,7 +198,6 @@ export default function CheckoutModal() {
               <select name="sucursal" value={formData.sucursal} onChange={handleChange} className="w-full bg-white border border-orange-200 rounded-lg p-3 text-gray-800 outline-none focus:border-amber-500 shadow-sm">
                 <option value="" disabled>Selecciona sucursal...</option>
                 <option value="Miraflores">Pizzetos Miraflores</option>
-                <option value="Chalco">Pizzetos Chalco</option>
               </select>
             </div>
 
